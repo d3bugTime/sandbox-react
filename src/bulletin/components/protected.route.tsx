@@ -1,26 +1,30 @@
 "use client";
 
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/bulletin/context/auth.context";
 
-export default function Home() {
+interface ProtectedRouteProps {
+    children: React.ReactNode;
+}
+
+export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     const router = useRouter();
     const { isAuthenticated } = useAuth();
 
     useEffect(() => {
-        if (isAuthenticated) {
-            router.replace('/game');
-        } else {
+        if (!isAuthenticated) {
             router.replace('/login');
         }
     }, [isAuthenticated, router]);
 
-    return (
-        <>
+    if (!isAuthenticated) {
+        return (
             <div style={{ padding: '40px', textAlign: 'center' }}>
                 <p>Loading...</p>
             </div>
-        </>
-    );
+        );
+    }
+
+    return <>{children}</>;
 }
